@@ -3,6 +3,12 @@ name = "ipcli"
 version = "0.1.0"
 authors = ["Grant Handy <grantshandy@gmail.com>"]
 edition = "2018"
+license = "GPL-3.0"
+description = "A CLI tool that finds the location of IP addresses."
+repository = "https://github.com/DefunctLizard/ipcli/"
+documentation = "https://docs.rs/ipcli"
+keywords = ["geolocation", "ip", "locator", "geolocator", "geolocate", "cli"]
+categories = ["network-programming", "command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
