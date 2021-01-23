@@ -2,7 +2,7 @@
 
 _pkgname='ipgeo'
 pkgname=${_pkgname}-git
-pkgver=0.1.0.r0.g6da668d
+pkgver=0.1.0.r1.gea85558
 pkgrel=1
 pkgdesc="A CLI tool that finds the location of IP addresses."
 arch=('x86_64')
