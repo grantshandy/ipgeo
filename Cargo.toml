@@ -7,7 +7,7 @@ license = "GPL-3.0"
 description = "A CLI tool that finds the location of IP addresses."
 repository = "https://github.com/DefunctLizard/ipgeocli/"
 documentation = "https://docs.rs/ipgeocli"
-keywords = ["geolocation", "ip", "locator", "geolocator", "geolocate", "cli"]
+keywords = ["geolocation", "ip", "locator", "geolocate", "cli"]
 categories = ["network-programming", "command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
