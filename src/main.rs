@@ -12,7 +12,7 @@ fn main() {
             Arg::with_name("ADDRESS")
                 .help("What IP address to look up, if none are selected your IP address will be chosen")
                 .required(false)
-                .index(0)
+                .index(1)
         )
         .arg(
             Arg::with_name("method")
