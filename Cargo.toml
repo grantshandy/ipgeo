@@ -1,12 +1,12 @@
 [package]
 name = "ipgeo"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Grant Handy <grantshandy@gmail.com>"]
 edition = "2018"
 license = "GPL-3.0"
 description = "A CLI tool that finds the location of IP addresses."
 repository = "https://github.com/DefunctLizard/ipgeocli/"
-documentation = "https://docs.rs/ipgeocli"
+documentation = "https://docs.rs/ipgeo"
 keywords = ["geolocation", "ip", "locator", "geolocate", "cli"]
 categories = ["network-programming", "command-line-utilities"]
 
