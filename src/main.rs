@@ -2,7 +2,7 @@ use ipgeolocate::Locator;
 use clap::{App, Arg, crate_version, ArgMatches};
 use ureq::get;
 use dns_lookup::lookup_host;
-use std::net::{Ipv6Addr, Ipv4Addr, IpAddr};
+use std::net::{Ipv6Addr, Ipv4Addr};
 
 // A simple CLI application for getting the city and country that an IP is located in.
 fn main() {
@@ -53,11 +53,11 @@ fn main() {
                 .takes_value(true)
                 .required(false)
                 .multiple(true)
-                .possible_values(&["ip", "latitude", "longitude", "city", "region", "country", "timezone", "service"])
+                .possible_values(&["ip", "latitude", "longitude", "city", "region", "country", "timezone", "method"])
         )
         .get_matches();
 
-    let ip: String = match matches.value_of("ADDRESS") {
+    let mut ip: String = match matches.value_of("ADDRESS") {
         Some(value) => value.to_string(),
         None => {
             match get_network_ip() {
@@ -84,9 +84,22 @@ fn main() {
             println!("detected IPv6 address")
         };
     } else {
-        match dns_lookup(matches, &ip) {
-            Ok(data) =>
-            Err(error) =>
+        match lookup_host(&ip) {
+            Ok(data) => {
+                if matches.is_present("verbose") {
+                    println!("DNS lookup successful");
+                };
+                for foo in data {
+                    if foo.is_ipv4() {
+                        ip = foo.to_string();
+                        continue;
+                    };
+                };
+            },
+            Err(error) => {
+                eprintln!("ipgeo: DNS lookup error: {}", error);
+                std::process::exit(0);
+            },
         };
     };
 
@@ -114,7 +127,7 @@ fn print_data(service: &str, app: ArgMatches, ip: Locator) {
                         "longitude" => ip.longitude.clone(),
                         "region" => ip.region.clone(),
                         "timezone" => ip.timezone.clone(),
-                        "service" => service.to_string().clone(),
+                        "method" => service.to_string().clone(),
                         &_ => String::from("NONE"),
                     };
 
@@ -138,20 +151,4 @@ fn get_network_ip() -> std::result::Result<String, std::io::Error> {
     };
 
     return response.into_string();
-}
-
-fn dns_lookup(app: ArgMatches, dns: &str) -> std::result::Result<IpAddr, std::io::Error> {
-    match lookup_host(dns) {
-        Ok(data) => {
-            if app.is_present("verbose") {
-                println!("DNS lookup successful");
-            };
-            for foo in data {
-
-            }
-        },
-        Err(error) => {
-            return Err(error);
-        },
-    };
 }
