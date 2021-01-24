@@ -1,6 +1,8 @@
 use ipgeolocate::Locator;
 use clap::{App, Arg, crate_version, ArgMatches};
 use ureq::get;
+use dns_lookup::lookup_host;
+use std::net::{Ipv6Addr, Ipv4Addr, IpAddr};
 
 // A simple CLI application for getting the city and country that an IP is located in.
 fn main() {
@@ -10,7 +12,7 @@ fn main() {
         .about("Finds IP locations")
         .arg(
             Arg::with_name("ADDRESS")
-                .help("What IP address to look up, if none are selected your IP address will be chosen")
+                .help("what IP address to look up, if none are selected your IP address will be chosen")
                 .required(false)
                 .index(1)
         )
@@ -18,7 +20,7 @@ fn main() {
             Arg::with_name("method")
                 .long("method")
                 .short("m")
-                .help("Choose Geolocation API, if not set it defaults to ipapi.")
+                .help("choose Geolocation API, if not set it defaults to ipapi.")
                 .required(false)
                 .takes_value(true)
                 .value_name("SERVICE")
@@ -31,7 +33,15 @@ fn main() {
             Arg::with_name("silent")
                 .long("silent")
                 .short("s")
-                .help("Run without verbose output")
+                .help("run without extra output")
+                .required(false)
+                .takes_value(false)
+        )
+        .arg(
+            Arg::with_name("verbose")
+                .long("verbose")
+                .short("v")
+                .help("run with verbose output")
                 .required(false)
                 .takes_value(false)
         )
@@ -39,7 +49,7 @@ fn main() {
             Arg::with_name("fields")
                 .long("fields")
                 .short("f")
-                .help("Choose what fields to print about the IP address.")
+                .help("choose what fields to print about the IP address.")
                 .takes_value(true)
                 .required(false)
                 .multiple(true)
@@ -50,10 +60,10 @@ fn main() {
     let ip: String = match matches.value_of("ADDRESS") {
         Some(value) => value.to_string(),
         None => {
-            match get_ip() {
+            match get_network_ip() {
                 Ok(ok) => {
                     if !matches.is_present("silent"){
-                        println!("No IP address set, using network IP address \"{}\"", ok);
+                        println!("no IP address set, using network IP address \"{}\"", ok);
                     }
                     ok
                 },
@@ -65,6 +75,21 @@ fn main() {
         },
     };
 
+    if ip.parse::<Ipv4Addr>().is_ok() {
+        if matches.is_present("verbose") {
+            println!("detected IPv4 address")
+        };
+    } else if ip.parse::<Ipv6Addr>().is_ok() {
+        if matches.is_present("verbose") {
+            println!("detected IPv6 address")
+        };
+    } else {
+        match dns_lookup(matches, &ip) {
+            Ok(data) =>
+            Err(error) =>
+        };
+    };
+
     let service = match matches.value_of("method") {
         Some(value) => value,
         None => "ipapi",
@@ -72,7 +97,7 @@ fn main() {
 
     match Locator::get(&ip, service) {
         Ok(ip) => print_data(service, matches.clone(), ip),
-        Err(error) => eprintln!("Error getting data: {}", error),
+        Err(error) => eprintln!("error getting location data: {}", error),
     };
 }
 
@@ -96,14 +121,14 @@ fn print_data(service: &str, app: ArgMatches, ip: Locator) {
                     println!("{}", bar);
                 };
             },
-            None => eprintln!("ERROR WITH FIELDS!"),
+            None => eprintln!("field interpretation error, unexpected!"),
         };
     } else {
         println!("{}: {} - {} ({})", service, ip.ip, ip.city, ip.country);
     };
 }
 
-fn get_ip() -> std::result::Result<String, std::io::Error> {
+fn get_network_ip() -> std::result::Result<String, std::io::Error> {
     let url = format!("http://ifconfig.me/ip");
 
     let response = get(&url).call();
@@ -113,4 +138,20 @@ fn get_ip() -> std::result::Result<String, std::io::Error> {
     };
 
     return response.into_string();
+}
+
+fn dns_lookup(app: ArgMatches, dns: &str) -> std::result::Result<IpAddr, std::io::Error> {
+    match lookup_host(dns) {
+        Ok(data) => {
+            if app.is_present("verbose") {
+                println!("DNS lookup successful");
+            };
+            for foo in data {
+
+            }
+        },
+        Err(error) => {
+            return Err(error);
+        },
+    };
 }

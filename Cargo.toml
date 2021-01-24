@@ -16,3 +16,4 @@ categories = ["network-programming", "command-line-utilities"]
 ipgeolocate = "0.3.0"
 clap = "2.33.3"
 ureq = "1.5.1"
+dns-lookup = "1.0.5"
