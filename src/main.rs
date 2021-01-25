@@ -1,8 +1,8 @@
-use ipgeolocate::Locator;
-use clap::{App, Arg, crate_version, ArgMatches};
-use ureq::get;
+use clap::{crate_version, App, Arg, ArgMatches};
 use dns_lookup::lookup_host;
-use std::net::{Ipv6Addr, Ipv4Addr};
+use ipgeolocate::Locator;
+use std::net::{Ipv4Addr, Ipv6Addr};
+use ureq::get;
 
 // A simple CLI application for getting the city and country that an IP is located in.
 fn main() {
@@ -59,18 +59,16 @@ fn main() {
 
     let mut ip: String = match matches.value_of("ADDRESS") {
         Some(value) => value.to_string(),
-        None => {
-            match get_network_ip() {
-                Ok(ok) => {
-                    if !matches.is_present("silent"){
-                        println!("no IP address set, using network IP address \"{}\"", ok);
-                    }
-                    ok
-                },
-                Err(error) => {
-                    eprintln!("error getting network IP address: {}", error);
-                    String::from("NONE")
-                },
+        None => match get_network_ip() {
+            Ok(ok) => {
+                if !matches.is_present("silent") {
+                    println!("no IP address set, using network IP address \"{}\"", ok);
+                }
+                ok
+            }
+            Err(error) => {
+                eprintln!("error getting network IP address: {}", error);
+                String::from("NONE")
             }
         },
     };
@@ -84,22 +82,25 @@ fn main() {
             println!("detected IPv6 address")
         };
     } else {
+        if matches.is_present("verbose") {
+            println!("neither ipv4 or ipv6 IP address found, looking \"{}\" up as a DNS address", ip);
+        };
         match lookup_host(&ip) {
             Ok(data) => {
                 if matches.is_present("verbose") {
-                    println!("DNS lookup successful");
+                    println!("DNS lookup for {} successful", ip);
                 };
                 for foo in data {
                     if foo.is_ipv4() {
                         ip = foo.to_string();
                         continue;
                     };
-                };
-            },
+                }
+            }
             Err(error) => {
-                eprintln!("ipgeo: DNS lookup error: {}", error);
+                eprintln!("DNS lookup for \"{}\" error: {}", ip, error);
                 std::process::exit(0);
-            },
+            }
         };
     };
 
@@ -132,8 +133,8 @@ fn print_data(service: &str, app: ArgMatches, ip: Locator) {
                     };
 
                     println!("{}", bar);
-                };
-            },
+                }
+            }
             None => eprintln!("field interpretation error, unexpected!"),
         };
     } else {
