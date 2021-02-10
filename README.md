@@ -1,13 +1,25 @@
 # ipgeocli
 A CLI tool that finds the location of IP addresses. Built to demonstrate my library `ipgeolocate`.
 
+
+With `ipgeo` you can get the location for an IP address or a DNS address and do lookups for both of them to get data on the ip, latitude, longitude, city, region, country, timezone, method, and a reverse DNS address.
+
+
+`ipgeo` was made to work within scripts, so you can use the `--silent` tag to print information without any extra fluff so it's easier to parse.
+
+
+`ipgeo` offers different methods to get information about IP addresses, and each has their own benefits. By default, ip-api.com is used because it gives accurate results and only limits requests by the minute and not by the day, week, or month.
+
+
+## Installation
 Install it by simply doing
 ```
 $ cargo install ipgeo
 ```
 
+## Command Line Arguments
 ```
-ipgeo 0.1.1
+ipgeo 0.1.3
 Grant H. <grantshandy@gmail.com>
 Finds IP locations
 
@@ -15,16 +27,17 @@ USAGE:
     ipgeo [FLAGS] [OPTIONS] [--] [ADDRESS]
 
 FLAGS:
-    -h, --help       Prints help information
-    -s, --silent     run without extra output
-    -V, --version    Prints version information
-    -v, --verbose    run with verbose output
+    -h, --help          Prints help information
+        --horizontal    Print fields horizontally
+        --vertical      Print fields vertically, chosen by default
+    -s, --silent        Run without extra output
+    -V, --version       Prints version information
+    -v, --verbose       Run with verbose output
 
 OPTIONS:
-    -f, --fields <fields>...    choose what fields to print about the IP address. [possible values: ip, latitude, longitude, city, region, country, timezone, method]
-    -m, --method <SERVICE>      choose Geolocation API, if not set it defaults to ipapi. [possible values: ipwhois, ipapi, ipapico, freegeoip]
+    -f, --fields <fields>...    Choose what fields to print about the IP address. [possible values: ip, latitude, longitude, city, region, country, timezone, method, dns]
+    -m, --method <SERVICE>      Choose Geolocation API, if not set it defaults to ipapi. [possible values: ipwhois, ipapi, ipapico, freegeoip]
 
 ARGS:
-    <ADDRESS>    what IP address to look up, if none are selected your IP address will be chosen
-
+    <ADDRESS>    What IP or DNS address to look up, if none are selected then your network IP address will be chosen
 ```
