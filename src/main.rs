@@ -1,7 +1,7 @@
 use clap::{crate_version, App, Arg, ArgMatches};
-use dns_lookup::{lookup_host, getnameinfo};
+use dns_lookup::{getnameinfo, lookup_host};
 use ipgeolocate::Locator;
-use std::net::{Ipv4Addr, Ipv6Addr, IpAddr, SocketAddr};
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
 use ureq::get;
 
 // A simple CLI application for getting the city and country that an IP is located in.
@@ -81,7 +81,7 @@ fn main() {
         Some(value) => value.to_string(),
         None => match get_network_ip() {
             Ok(ok) => {
-                if !matches.is_present("silent") {
+                if matches.is_present("verbose") {
                     println!("no IP address set, using network IP address \"{}\"", ok);
                 }
                 ok
@@ -127,7 +127,7 @@ fn main() {
                         ip = foo.to_string();
                         continue;
                     };
-                };
+                }
             }
             Err(error) => {
                 // If it isn't an IPv4, IPv6, or DNS address, give the user some instructions on why they're an idiot.
@@ -139,7 +139,7 @@ fn main() {
         };
     };
 
-    // Set the service variable. If the user hasn't specified anything then just set it as ipapi.
+    // Set the method variable. If the user hasn't specified anything then just set it as ipapi.
     // ipapi is probably the best in most situations because it has pretty reliable results and has minute by minute request limits so its pretty hard to break in a script.
     let service = match matches.value_of("method") {
         Some(value) => value,
@@ -168,7 +168,7 @@ fn print_data(service: &str, app: ArgMatches, ip: Locator, orig_ip: &str) {
                             };
 
                             dns
-                        },
+                        }
                         "city" => ip.city.clone(),
                         "country" => ip.country.clone(),
                         "ip" => ip.ip.clone(),
@@ -197,7 +197,7 @@ fn print_data(service: &str, app: ArgMatches, ip: Locator, orig_ip: &str) {
                             println!("{}: {}", foo, bar);
                         };
                     };
-                };
+                }
 
                 if app.is_present("horizontal") {
                     print!("\n");
@@ -207,7 +207,7 @@ fn print_data(service: &str, app: ArgMatches, ip: Locator, orig_ip: &str) {
         };
     } else {
         // If the user didn't specify any fields, just print it kinda pretty like this:
-        println!("{}: {} - {} ({})", service, ip.ip, ip.city, ip.country);
+        println!("{} - {} ({})", ip.ip, ip.city, ip.country);
     };
 }
 
@@ -225,6 +225,7 @@ fn get_network_ip() -> std::result::Result<String, std::io::Error> {
     return response.into_string();
 }
 
+// This is a function for looking up a DNS address that pertains to an IP address.
 fn get_dns(ip: IpAddr) -> String {
     let socket: SocketAddr = (ip, 80).into();
 
