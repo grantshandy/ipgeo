@@ -6,7 +6,6 @@ edition = "2018"
 license = "GPL-3.0"
 description = "A CLI tool that finds the location and other information of IP addresses or DNS addresses."
 repository = "https://github.com/DefunctLizard/ipgeocli/"
-documentation = "https://docs.rs/ipgeo"
 keywords = ["geolocation", "ip", "locator", "geolocate", "cli"]
 categories = ["network-programming", "command-line-utilities"]
 
@@ -17,3 +16,4 @@ ipgeolocate = "0.3.0"
 clap = "2.33.3"
 ureq = "1.5.1"
 dns-lookup = "1.0.5"
+colored = "2"
