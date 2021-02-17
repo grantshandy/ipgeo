@@ -19,7 +19,7 @@ $ cargo install ipgeo
 
 ## Command Line Arguments
 ```
-ipgeo 0.1.3
+ipgeo 0.1.4
 Grant H. <grantshandy@gmail.com>
 Finds IP locations
 
@@ -27,15 +27,15 @@ USAGE:
     ipgeo [FLAGS] [OPTIONS] [--] [ADDRESS]
 
 FLAGS:
+    -a, --all           Print all available information
     -h, --help          Prints help information
-        --horizontal    Print fields horizontally
-        --vertical      Print fields vertically, chosen by default
+        --horizontal    Print fields horizontally.
     -s, --silent        Run without extra output
     -V, --version       Prints version information
     -v, --verbose       Run with verbose output
 
 OPTIONS:
-    -f, --fields <fields>...    Choose what fields to print about the IP address. [possible values: ip, latitude, longitude, city, region, country, timezone, method, dns]
+    -f, --fields <FIELDS>...    Choose what fields to print about the IP address. [possible values: ip, latitude, longitude, city, region, country, timezone, method, dns]
     -m, --method <SERVICE>      Choose Geolocation API, if not set it defaults to ipapi. [possible values: ipwhois, ipapi, ipapico, freegeoip]
 
 ARGS:
