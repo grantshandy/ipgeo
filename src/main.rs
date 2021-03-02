@@ -1,7 +1,7 @@
 use clap::{crate_version, App, Arg, ArgMatches};
 use colored::Colorize;
 use dns_lookup::{getnameinfo, lookup_host};
-use ipgeolocate::Locator;
+use ipgeolocate::{Locator, Service};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
 use ureq::get;
 
@@ -160,9 +160,9 @@ fn main() {
 
     // Set the method variable. If the user hasn't specified anything then just set it as ipapi.
     // ipapi is probably the best in most situations because it has pretty reliable results and has minute by minute request limits so its pretty hard to break in a script.
-    let service = match matches.value_of("method") {
-        Some(value) => value,
-        None => "ipapi",
+    let service: Service = match matches.value_of("method") {
+        Some(value) => match_method(value),
+        None => Service::IpApi,
     };
 
     // Once we have all the variables set, we can actually run the Locator and then print the results using print_data().
@@ -174,7 +174,7 @@ fn main() {
 
 // I'm particularly proud of this function.
 // It goes through all the fields set from the user and then print each of the variables individually.
-fn print_data(service: &str, app: ArgMatches, ip: Locator, is_dns: bool, address: &str) {
+fn print_data(service: Service, app: ArgMatches, ip: Locator, is_dns: bool, address: &str) {
     if app.is_present("fields") {
         match app.values_of("fields") {
             Some(general_data) => {
@@ -217,7 +217,7 @@ fn print_data(service: &str, app: ArgMatches, ip: Locator, is_dns: bool, address
     };
 }
 
-fn print_all_fields(app: &ArgMatches, ip: &Locator, service: &str, is_dns: bool, address: &str) {
+fn print_all_fields(app: &ArgMatches, ip: &Locator, service: Service, is_dns: bool, address: &str) {
     let data_types = vec![
         "ip",
         "dns",
@@ -297,4 +297,14 @@ fn get_dns(ip: IpAddr) -> String {
     };
 
     return name;
+}
+
+fn match_method(method: &str) -> Service {
+    match method {
+        "ipapi" => Service::IpApi,
+        "ipapico" => Service::IpApiCo,
+        "ipwhois" => Service::IpWhois,
+        "freegeoip" => Service::FreeGeoIp,
+        &_ => panic!("Other method detected"),
+    }
 }

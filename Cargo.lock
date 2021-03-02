@@ -180,7 +180,7 @@ dependencies = [
 
 [[package]]
 name = "ipgeo"
-version = "0.1.4"
+version = "0.1.6"
 dependencies = [
  "clap",
  "colored",
@@ -191,9 +191,9 @@ dependencies = [
 
 [[package]]
 name = "ipgeolocate"
-version = "0.3.0"
+version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd066e663649364c32b89b5139a71c024c12ef2efafc3288bc051cc58dc7d010"
+checksum = "ad6311e000dc5f6cd9075869a67a7844d42efa22a4b4e84d7bb85abbd1afaf6e"
 dependencies = [
  "serde_json",
  "ureq",
