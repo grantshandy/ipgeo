@@ -1,6 +1,6 @@
 [package]
 name = "ipgeo"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["Grant Handy <grantshandy@gmail.com>"]
 edition = "2018"
 license = "GPL-3.0"
@@ -12,8 +12,9 @@ categories = ["network-programming", "command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ipgeolocate = "0.3.4"
+ipgeolocate = "0.3.5"
 clap = "2.33.3"
-ureq = "1.5.1"
+ureq = "2.0.2"
 dns-lookup = "1.0.5"
 colored = "2"
+async-std = { version = "1.9.0", features = ["attributes"] }

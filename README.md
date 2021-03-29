@@ -19,9 +19,9 @@ $ cargo install ipgeo
 
 ## Command Line Arguments
 ```
-ipgeo 0.1.4
-Grant H. <grantshandy@gmail.com>
-Finds IP locations
+ipgeo 0.1.7
+Grant Handy <grantshandy@gmail.com>
+Finds IP Information
 
 USAGE:
     ipgeo [FLAGS] [OPTIONS] [--] [ADDRESS]
