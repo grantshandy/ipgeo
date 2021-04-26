@@ -1,5 +1,5 @@
 # ipgeo
-A CLI tool that finds the location of IP addresses. Built to demonstrate my library `ipgeolocate`.
+A CLI tool that finds the location of IP addresses. Built to demonstrate my library [`ipgeolocate`](https://github.com/grantshandy/ipgeolocate).
 
 
 With `ipgeo` you can get the location for an IP address or a DNS address and do lookups for both of them to get data on the ip, latitude, longitude, city, region, country, timezone, method, and a reverse DNS address.
