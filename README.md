@@ -1,4 +1,4 @@
-# ipgeocli
+# ipgeo
 A CLI tool that finds the location of IP addresses. Built to demonstrate my library `ipgeolocate`.
 
 
