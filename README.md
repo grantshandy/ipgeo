@@ -2,6 +2,7 @@
 [![Crates.io](https://img.shields.io/crates/v/ipgeo.svg)](https://crates.io/crates/ipgeo)
 [![API](https://docs.rs/ipgeo/badge.svg)](https://docs.rs/ipgeo)
 [![Crates.io](https://img.shields.io/crates/d/ipgeo)](https://crates.io/crates/ipgeo)
+[![AUR](https://img.shields.io/aur/version/ipgeo-git)](https://aur.archlinux.org/packages/ipgeo-git/)
 
 A CLI tool that finds the location of IP addresses. Built to demonstrate my library [`ipgeolocate`](https://github.com/grantshandy/ipgeolocate).
 
