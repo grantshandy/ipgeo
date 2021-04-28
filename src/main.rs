@@ -1,7 +1,7 @@
 use clap::{crate_version, App, Arg, ArgMatches};
 use colored::Colorize;
 use ipgeolocate::{Locator, Service};
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use dns_lookup::lookup_host;
 mod tools;
 
@@ -93,18 +93,15 @@ async fn main() {
     // Get IP target from clap, if the user didn't specify anything then use get_network_ip() to find your network IP instead.
     let mut ip: String = match matches.value_of("ADDRESS") {
         Some(value) => value.to_string(),
-        None => match tools::get_network_ip() {
-            Ok(ok) => {
+        None => {
+                let i = tools::get_network_ip().await;
+
                 if matches.is_present("verbose") {
-                    println!("no IP address set, using network IP address \"{}\"", ok);
-                }
-                ok
-            }
-            Err(error) => {
-                eprintln!("error getting network IP address: {}", error);
-                std::process::exit(1);
-            }
-        },
+                    println!("no IP address set, using network IP address \"{}\"", i);
+                };
+                
+                i
+        }
     };
 
     let address = ip.clone();

@@ -1,15 +1,14 @@
 use dns_lookup::getnameinfo;
 use crate::Service;
+use std::net::{IpAddr, SocketAddr};
 
 // This function gets the users network IP address from "ifconfig.me" a website that just sends you back your IP address.
 // There are probably better, faster, ways to do this, but I'm kind of an idiot when it comes to networking so I'm just going to let this slide.
-pub fn get_network_ip() -> std::result::Result<String, ureq::Error> {
-    let url = format!("http://ifconfig.me/ip");
-
-    let response = ureq::get(&url).call();
+pub async fn get_network_ip() -> String {
+    let response = surf::get("http://ifconfig.me/ip").recv_string().await;
 
     match response {
-        Ok(response) => Ok(response.into_string().unwrap()),
+        Ok(response) => return response,
         Err(_) => {
             eprintln!("error connecting to ifconfig.me");
             std::process::exit(1);

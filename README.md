@@ -24,7 +24,7 @@ $ cargo install ipgeo
 
 ## Command Line Arguments
 ```
-ipgeo 0.1.7
+ipgeo 0.1.8
 Grant Handy <grantshandy@gmail.com>
 Finds IP Information
 
