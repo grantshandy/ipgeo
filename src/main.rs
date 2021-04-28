@@ -1,9 +1,9 @@
 use clap::{crate_version, App, Arg, ArgMatches};
 use colored::Colorize;
-use dns_lookup::{getnameinfo, lookup_host};
 use ipgeolocate::{Locator, Service};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr};
-use ureq::get;
+use dns_lookup::lookup_host;
+mod tools;
 
 #[async_std::main]
 async fn main() {
@@ -93,7 +93,7 @@ async fn main() {
     // Get IP target from clap, if the user didn't specify anything then use get_network_ip() to find your network IP instead.
     let mut ip: String = match matches.value_of("ADDRESS") {
         Some(value) => value.to_string(),
-        None => match get_network_ip() {
+        None => match tools::get_network_ip() {
             Ok(ok) => {
                 if matches.is_present("verbose") {
                     println!("no IP address set, using network IP address \"{}\"", ok);
@@ -158,7 +158,7 @@ async fn main() {
     // Set the method variable. If the user hasn't specified anything then just set it as ipapi.
     // ipapi is probably the best in most situations because it has pretty reliable results and has minute by minute request limits so its pretty hard to break in a script.
     let service: Service = match matches.value_of("method") {
-        Some(value) => match_method(value),
+        Some(value) => tools::match_method(value),
         None => Service::IpApi,
     };
 
@@ -179,7 +179,7 @@ fn print_data(service: Service, app: ArgMatches, ip: Locator, is_dns: bool, addr
                     let data_value = match data_type {
                         "dns" => {
                             if !is_dns {
-                                get_dns(ip.ip.clone().parse::<IpAddr>().unwrap())
+                                tools::get_dns(ip.ip.clone().parse::<IpAddr>().unwrap())
                             } else {
                                 address.to_string()
                             }
@@ -231,7 +231,7 @@ fn print_all_fields(app: &ArgMatches, ip: &Locator, service: Service, is_dns: bo
         let data_value = match data_type {
             "dns" => {
                 if !is_dns {
-                    get_dns(ip.ip.clone().parse::<IpAddr>().unwrap())
+                    tools::get_dns(ip.ip.clone().parse::<IpAddr>().unwrap())
                 } else {
                     address.to_string()
                 }
@@ -265,45 +265,4 @@ fn print_field(data_value: &str, data_type: &str, app: &ArgMatches) {
             println!("{}: {}", data_type, data_value);
         };
     };
-}
-
-// This function gets the users network IP address from "ifconfig.me" a website that just sends you back your IP address.
-// There are probably better, faster, ways to do this, but I'm kind of an idiot when it comes to networking so I'm just going to let this slide.
-fn get_network_ip() -> std::result::Result<String, ureq::Error> {
-    let url = format!("http://ifconfig.me/ip");
-
-    let response = get(&url).call();
-
-    match response {
-        Ok(response) => Ok(response.into_string().unwrap()),
-        Err(_) => {
-            eprintln!("error connecting to ifconfig.me");
-            std::process::exit(1);
-        }
-    }
-}
-
-// This is a function for looking up a DNS address that pertains to an IP address.
-fn get_dns(ip: IpAddr) -> String {
-    let socket: SocketAddr = (ip, 80).into();
-
-    let name = match getnameinfo(&socket, 0) {
-        Ok(data) => data.0,
-        Err(e) => {
-            eprintln!("failed to lookup socket {:?}", e);
-            std::process::exit(1);
-        }
-    };
-
-    return name;
-}
-
-fn match_method(method: &str) -> Service {
-    match method {
-        "ipapi" => Service::IpApi,
-        "ipapico" => Service::IpApiCo,
-        "ipwhois" => Service::IpWhois,
-        "freegeoip" => Service::FreeGeoIp,
-        &_ => panic!("Other method detected"),
-    }
 }
